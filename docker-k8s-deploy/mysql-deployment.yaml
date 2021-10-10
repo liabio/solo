@@ -1,0 +1,32 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  replicas: 1
+  template: 
+    metadata:
+      labels:
+        name: mysql
+    spec:
+      containers:
+      - name: mysql 
+        image: mysql:5.7.28 
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 3306
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: "mysql-pwd"
+        volumeMounts:
+        - name: mysql-config
+          mountPath: /etc/mysql/mysql.conf.d
+        - name: mysql-data
+          mountPath: /var/lib/mysql
+      volumes:
+      - name: mysql-config
+        hostPath:
+          path: /data/blog-solo/mysql-config/
+      - name: mysql-data
+        hostPath:
+          path: /data/blog-solo/mysql-data/

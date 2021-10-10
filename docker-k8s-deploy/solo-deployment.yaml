@@ -1,0 +1,58 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    name: solo
+  name: solo
+  namespace: default
+spec:
+  progressDeadlineSeconds: 2147483647
+  replicas: 1
+  revisionHistoryLimit: 2147483647
+  selector:
+    matchLabels:
+      name: solo
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        name: solo
+    spec:
+      volumes:
+      - configMap:
+          defaultMode: 420
+          name: solo-log
+        name: solo-log
+      containers:
+      - args:
+        - --server_scheme=https
+        - --server_host=blog.liabio.cn
+        volumeMounts:
+        - mountPath: /opt/solo/log4j2.xml
+          subPath: log4j2.xml
+          name: solo-log
+        env:
+        - name: RUNTIME_DB
+          value: MYSQL
+        - name: JDBC_USERNAME
+          value: solo
+        - name: JDBC_PASSWORD
+          value: solo-pwd
+        - name: JDBC_DRIVER
+          value: com.mysql.cj.jdbc.Driver
+        - name: JDBC_URL
+          value: jdbc:mysql://localhost:3306/solo?useUnicode=yes&characterEncoding=UTF-8&useSSL=false&serverTimezone=UTC
+        image: smallsoup/solo:br_v4.3.1
+        imagePullPolicy: IfNotPresent
+        name: solo
+        ports:
+        - containerPort: 8080
+          hostPort: 8080
+          protocol: TCP
+        resources: {}
+

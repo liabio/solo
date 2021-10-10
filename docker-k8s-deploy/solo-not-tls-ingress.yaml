@@ -1,0 +1,20 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  annotations:
+    nginx.ingress.kubernetes.io/cors-allow-headers: DNT,X-CustomHeader,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,Authorization
+    nginx.ingress.kubernetes.io/cors-allow-methods: PUT, GET, POST, OPTIONS
+    nginx.ingress.kubernetes.io/cors-allow-origin: '*'
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+  name: solo-no-tls
+  namespace: default
+spec:
+  rules:
+  - host: ca.test2.liabio.cn
+    http:
+      paths:
+      - backend:
+          serviceName: solo
+          servicePort: 8080
+        path: /
+        pathType: ImplementationSpecific
